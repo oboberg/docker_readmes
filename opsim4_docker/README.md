@@ -108,7 +108,6 @@ docker run -it --rm --name "$1" \
           -v ${run_dir}:/home/opsim/run_local \
           -v ${config_dir}:/home/opsim/other-configs \
           -v ${sky_brightness_data_dir}:/home/opsim/repos/sims_skybrightness_pre/data \
-          -v /Users/owen/lsst/opsimv4_data/fbs_repos:/home/opsim/dev_repos \
           -v $HOME/.config:/home/opsim/.config \
           -e OPSIM_HOSTNAME=${host_name} \
           -e DISPLAY=${host_ip}:0 \
@@ -117,3 +116,64 @@ docker run -it --rm --name "$1" \
 ~~~
 
 Now just start the container with `./docker_opsimv4.sh my_container_name`.
+
+
+# Real working example (bash script method)
+
+I made a fresh directory in `$HOME` called `test_container`. Here are the contents assuming it is my present working directory.
+~~~
+$ ls
+$ docker_opsimv4.sh  opsimv4_data/
+$ ls opsimv4_data/
+config_dir/ run_dir/
+$ ls opsimv4_data/run_dir/
+log/    output/
+~~~
+~~~
+$ more docker_opsimv4.sh
+
+#!/bin/bash
+# Run directory
+run_dir=$HOME/test_container/opsimv4_data/run_dir
+# Configuration directory
+config_dir=$HOME/test_container/opsimv4_data/config_dir
+
+docker run -it --rm --name "$1" \
+          -v ${run_dir}:/home/opsim/run_local \
+          -v ${config_dir}:/home/opsim/other-configs \
+          -v $HOME/.config:/home/opsim/.config \
+          -e OPSIM_HOSTNAME=opsim-docker \
+          -p 8888:8888 \
+          oboberg/opsim4_fbs_py3:180502
+~~~
+
+Run command:
+~~~
+$ /docker_opsimv4.sh my_opsim_test
+~~~
+After running this command you will see output setting up the container environment.
+Really just running scons and setup. If a scons test fails it is ok, we are fixing that.
+
+When it is done your command promt should now look something like this:
+~~~
+opsim@10e581808be4 ~]$
+~~~
+Let's do an `ls` just to see what is there
+~~~
+[opsim@10e581808be4 ~]$ ls
+dds  default_configs  other-configs  pull_and_config.sh  pull_repos.sh  repos  run_local  sky_brightness_data  stack  startup_fbs.sh
+~~~
+Go ahead an run the `pull_repos.sh` script. This will get all of the container repos up to date.
+~~~
+[opsim@10e581808be4 ~]$ ./pull_repos.sh
+~~~
+Again you will see pull commands and scons ouput.
+
+The next step is to setup the tracking database for the opsim runs. This is done simply with this command.
+~~~
+[opsim@10e581808be4 ~]$ manage_db --save-dir=/home/opsim/run_local/output
+[opsim@10e581808be4 ~]$ ls run_local/output/
+opsim-docker_sessions.db
+~~~
+You can see that the root name of the sessions db is the `OPSIM_HOSTNAME` set in
+the bash script.

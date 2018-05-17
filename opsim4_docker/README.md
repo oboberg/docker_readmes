@@ -120,7 +120,11 @@ Now just start the container with `./docker_opsimv4.sh my_container_name`.
 
 # Real working example (bash script method)
 
-I made a fresh directory in `$HOME` called `test_container`. Here are the contents assuming it is my present working directory.
+I made a fresh directory in `$HOME` called `test_container`.
+If you cloned this repo directory I have provided the `test_container` directory and
+it contains the `docker_opsimv4.sh` script.
+
+Here are the contents assuming it is my present working directory.
 ~~~
 $ ls
 $ docker_opsimv4.sh  opsimv4_data/
@@ -177,3 +181,73 @@ opsim-docker_sessions.db
 ~~~
 You can see that the root name of the sessions db is the `OPSIM_HOSTNAME` set in
 the bash script.
+
+Now `cd` into `run_local`. Only output in this directory and `~/other-configs/` will be saved after the container is stopped.
+This is because these are the local volumes mounted in the container.
+~~~
+[opsim@10e581808be4 ~]$ cd run_local/
+[opsim@10e581808be4 run_local]$ ls
+log  output
+~~~
+Try running `opsim4 -h` to see the what options are available for running commands. Note the default is to use the feature based scheduler.
+
+Test a one day simulation using the `feature` based scheduler.
+
+~~~
+[opsim@10e581808be4 run_local]$ opsim4 --scheduler feature  -c "test one day simulation with feature scheduler" --frac-duration=0.003
+~~~
+
+After it is done running, should only take a couple of minutes, `ls` the directories in `run_local`
+~~~
+[opsim@10e581808be4 run_local]$ ls log/
+opsim-docker_2000.log
+[opsim@10e581808be4 run_local]$ ls output/
+opsim-docker_2000.db  opsim-docker_sessions.db
+~~~
+
+You can see the simulation ran an produced a log and database file.
+
+In a new terminal on your local host, change directory to whatever you set as the `run_dir` for
+the run script. You should see the same see matching `log` and `'db` files in the local directories.
+These files will remain on your local disk even after the container is stopped and removed.
+
+Now lets do an example with the proposal based scheduler. First we have to unsetup the feature based scheduler.
+
+~~~
+[opsim@10e581808be4 run_local]$ unsetup sims_featureScheduler
+~~~
+
+Now re-setup the other packages.
+~~~
+[opsim@10e581808be4 run_local]$ source ~/stack/loadLSST.bash
+[opsim@10e581808be4 run_local]$ setup sims_ocs
+[opsim@10e581808be4 run_local]$ setup ts_scheduler
+[opsim@10e581808be4 run_local]$ setup ts_astrosky_model
+~~~
+
+Now run the command to start the simulation
+~~~
+opsim4 --scheduler proposal  -c "test one day simulation with propsal scheduler" --frac-duration=0.003 --dds-com
+~~~
+
+`ls` the directories in `run_local` again and you will see that the `log` and `database` files have incremented by 1.
+~~~
+[opsim@10e581808be4 run_local]$ ls log/
+opsim-docker_2000.log  opsim-docker_2001.log
+
+[opsim@10e581808be4 run_local]$ ls output/
+opsim-docker_2000.db  opsim-docker_2001.dbopsim-docker_sessions.db
+~~~
+
+These new files should also be in the local `run_dir`.
+
+If you want to switch pack to using the feature based scheduler simply re-run the `pull_repos.sh` script,
+or do the following.
+
+~~~
+[opsim@10e581808be4 run_local]$ source ~/stack/loadLSST.bash
+[opsim@10e581808be4 run_local]$ setup sims_ocs
+[opsim@10e581808be4 run_local]$ setup ts_scheduler
+[opsim@10e581808be4 run_local]$ setup sims_featureScheduler
+[opsim@10e581808be4 run_local]$ setup ts_astrosky_model
+~~~

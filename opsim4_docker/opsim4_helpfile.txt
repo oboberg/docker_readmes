@@ -1,0 +1,84 @@
+usage: opsim4 [options]
+
+The Operations Simulator v4 is designed to operate the LSST Scheduler via the
+Simulated Observatory Control System (SOCS).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  -c [STARTUP_COMMENT [STARTUP_COMMENT ...]], --startup-comment [STARTUP_COMMENT [STARTUP_COMMENT ...]]
+                        Enter a comment for the simulation session. NOTE: Do
+                        not use an equal sign with the long option! (default:
+                        No comment was entered.)
+  --frac-duration FRAC_DURATION
+                        Temporary flag to set the fractional duration for the
+                        survey in units of years. (default: -1)
+  --no-sched            Flag to make program not wait for Scheduler. (default:
+                        False)
+  --scheduler-timeout SCHEDULER_TIMEOUT
+                        Override the 60 second DDS message timeouts in the
+                        Scheduler main loop. (default: 60)
+  --dds-comm            Run using DDS comm. (default: False)
+  --profile             Run the profiler on SOCS andScheduler code. (default:
+                        False)
+  --scheduler {feature,proposal}
+                        Select which driver to run (when using no DDS comm)
+                        (default: feature)
+
+sqlite:
+  This group of arguments is for dealing with a SQLite database.
+
+  --save-dir SQLITE_SAVE_DIR
+                        A directory to save all the SQLite simulation output
+                        including session tracking database. (default: None)
+  --session-save-dir SQLITE_SESSION_SAVE_DIR
+                        An alternate directory to save just the SQLite session
+                        tracking database. (default: None)
+  -s SESSION_ID_START, --session-id-start SESSION_ID_START
+                        Set a new value for the starting session ID. (default:
+                        None)
+
+tracking:
+  This group of arguments controls the tracking of the simulation session.
+
+  -t, --track           Flag to track the current simulation in the central
+                        OpSim tracking database. (default: False)
+  --tracking-db TRACKING_DB
+                        Option to set an alternative URL for the OpSim
+                        tracking database. (default: None)
+  --session-code {science,code_dev,system,engineering}
+                        Set the type of simulation session for the OpSim
+                        tracking database. (default: science)
+
+config:
+  This group of arguments controls the configuration of the simulated
+  survey.
+
+  --config [CONFIG [CONFIG ...]]
+                        Provide a set of override files for the survey
+                        configuration. If a directory is provided, it is
+                        assumed all of the configuration files reside there.
+                        (default: None)
+  --save-config         If set, a config_<session Id> directory that will
+                        contain the saved configuration will be created at the
+                        location of --save-config-dir. (default: False)
+  --config-save-path CONFIG_SAVE_PATH
+                        Set the path to the configuration save directory. The
+                        default will be to save in the execution directory.
+                        (default: $PWD)
+
+logging:
+  This group of arguments controls the logging of the application.
+
+  -l LOG_PATH, --log-path LOG_PATH
+                        Set the path to write log files for the application.
+                        If none, is provided, the application will assume a
+                        directory named log in the running directory.
+                        (default: log)
+  -v, --verbose         Set the verbosity for the console and file logging.
+                        Default is to log nothing to the console and debug to
+                        the log file. More than two levels are ignored for the
+                        console and more than five are ignored for the log
+                        file. NOTE: Please do not use more than three flags
+                        for long runs as it will generate LOTS of output.
+                        (default: 0)

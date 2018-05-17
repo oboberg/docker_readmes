@@ -14,6 +14,8 @@ mkdir $HOME/opsimv4_data/run_dir/output
 mkdir $HOME/opsimv4_data/config_dir
 ~~~
 
+[Click here to skip details and run options](#real-working-example-bash-script-method)
+
 ### You can add the following lines to your `.bash_profile`, but it is not required.
 ~~~
  # Export things for opsim docker run
@@ -251,3 +253,21 @@ or do the following.
 [opsim@10e581808be4 run_local]$ setup sims_featureScheduler
 [opsim@10e581808be4 run_local]$ setup ts_astrosky_model
 ~~~
+
+# Using jupyter lab or jupyter notebooks
+
+While still in `run_local` use the following command to start the `jupyter lab` interface.
+~~~
+[opsim@10e581808be4 run_local]$ jupyter lab --ip=0.0.0.0
+~~~
+You will see eventually see the link come up to access the `jupyter lab` page. Something like this.
+~~~
+Copy/paste this URL into your browser when you connect for the first time,
+to login with a token:
+    http://0.0.0.0:8888/?token=sometokennumber
+~~~
+As it says, copy and paste the link into a browser on your local machine.
+
+If you get stuck on an authentication page it is likely that you have something else
+running on port `8888` on your machine. Kill that and try running the `jupyter lab` command again.
+Remember, only notebooks saved in `run_local` will also be saved on your local machine.

@@ -96,9 +96,9 @@ also just define everything in a script. Let's say it is called `docker_opsimv4.
 ~~~
 #!/bin/bash
 # Run directory
-run_dir=$HOME/opsimv4_data/fbs_runs/run_dir
+run_dir=$HOME/opsimv4_data/run_dir
 # Configuration directory
-config_dir=$HOME//config_dir
+config_dir=$HOME/opsimv4_data/config_dir
 # Sky Brightness data directory
 #sky_brightness_data_dir=$HOME/sims_skybrightness_pre/data
 # IP address for machine

@@ -85,6 +85,35 @@ docker run --name "$1" \
         -e OPSIM_HOSTNAME=opsim-docker \
         -e DISPLAY=HOST_IP:0 \
         -p 8888:8888 \
-        oboberg/opsim4_fbs_py3:
+        oboberg/opsim4_fbs_py3:180502
 ~~~
 You will need to have `${sky_brightness_data_dir}` set in your `.bash_profile`.
+
+### Docker `run` option 4.
+If you dont want to add various paths and variables to your `.bash_profile`, you can
+also just define everything in a script. Let's say it is called `docker_opsimv4.sh`
+
+~~~
+#!/bin/bash
+# Run directory
+run_dir=$HOME/opsimv4_data/fbs_runs/run_dir
+# Configuration directory
+config_dir=$HOME//config_dir
+# Sky Brightness data directory
+#sky_brightness_data_dir=$HOME/sims_skybrightness_pre/data
+# IP address for machine
+host_ip=127.0.0.1
+
+docker run -it --rm --name "$1" \
+          -v ${run_dir}:/home/opsim/run_local \
+          -v ${config_dir}:/home/opsim/other-configs \
+          -v ${sky_brightness_data_dir}:/home/opsim/repos/sims_skybrightness_pre/data \
+          -v /Users/owen/lsst/opsimv4_data/fbs_repos:/home/opsim/dev_repos \
+          -v $HOME/.config:/home/opsim/.config \
+          -e OPSIM_HOSTNAME=${host_name} \
+          -e DISPLAY=${host_ip}:0 \
+          -p 8899:8888 \
+          oboberg/opsim4_fbs_py3:180502
+~~~
+
+Now just start the container with `./docker_opsimv4.sh my_container_name`.

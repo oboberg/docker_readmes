@@ -56,3 +56,35 @@ Breakdown of command:
  - `-p 8888:8888` this is read as `port on host:port on container`. Meaning port `8888` in the container will be fed to port `8888` on your local host. This allows you to use things like `jupyter lab`.
 
  - `oboberg/opsim4_fbs_py3:180502` this is the name of the docker image. If you dont already have it from doing `docker pull oboberg/opsim4_fbs_py3:180502`, it will automatically be pulled.
+
+### Docker `run` option 2.
+Same as above but mounting local repo directory in container for development.
+ ~~~
+ docker run -it --rm --name container_name \
+           -v ${run_dir}:/home/opsim/run_local \
+           -v ${config_dir}:/home/opsim/other-configs \
+           -v /Users/my_name/lsst/opsimv4_data/fbs_repos:/home/opsim/dev_repos \
+           -v $HOME/.config:/home/opsim/.config \
+           -e OPSIM_HOSTNAME=opsim-docker \
+           -e DISPLAY=HOST_IP:0 \
+           -p 8888:8888 \
+           oboberg/opsim4_fbs_py3:180502
+ ~~~
+
+Doing this will allow you to locally edit code in `/Users/my_name/lsst/opsimv4_data/fbs_repos` and have it be accessible to the container. You will have to `eups` declare, setup, and scons the packages as you normally would.
+
+### Docker `run` option 3.
+The docker image comes with about 40 nights of sky brightness data. If you have a complete set that you would like to mount in the container just add the following.
+
+~~~
+docker run --name "$1" \
+        -v ${run_dir}:/home/opsim/run_local \
+        -v ${config_dir}:/home/opsim/other-configs \
+        -v ${sky_brightness_data_dir}:/home/opsim/repos/sims_skybrightness_pre/data \
+        -v $HOME/.config:/home/opsim/.config \
+        -e OPSIM_HOSTNAME=opsim-docker \
+        -e DISPLAY=HOST_IP:0 \
+        -p 8888:8888 \
+        oboberg/opsim4_fbs_py3:
+~~~
+You will need to have `${sky_brightness_data_dir}` set in your `.bash_profile`.

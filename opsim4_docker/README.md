@@ -228,9 +228,10 @@ You will see eventually see the link come up to access the `jupyter lab` page. S
 ~~~
 Copy/paste this URL into your browser when you connect for the first time,
 to login with a token:
-    http://0.0.0.0:8888/?token=sometokennumber
+    http://(6ad1a1ec6563 or 127.0.0.1):8888/?token=sometoken
 ~~~
-As it says, copy and paste the link into a browser on your local machine.
+As it says, copy and paste the link into a browser on your local machine, but replace
+`(6ad1a1ec6563 or 127.0.0.1)` with `8888`,`localhost`, or `127.0.0.1`.
 
 If you get stuck on an authentication page it is likely that you have something else
 running on port `8888` on your machine. Kill that and try running the `jupyter lab` command again.

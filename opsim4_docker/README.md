@@ -33,9 +33,8 @@ docker run -it --rm --name container_name \
           -v ${config_dir}:/home/opsim/other-configs \
           -v $HOME/.config:/home/opsim/.config \
           -e OPSIM_HOSTNAME=opsim-docker \
-          -e DISPLAY=HOST_IP:0 \
           -p 8888:8888 \
-          oboberg/opsim4_fbs_py3:180502
+          oboberg/opsim4_fbs_py3:latest
 ~~~
 
 Breakdown of command:
@@ -52,12 +51,9 @@ Breakdown of command:
  - `-e OPSIM_HOSTNAME=opsim-docker` sets the `OPSIM_HOSTNAME` environment variable inside the container. This sets the name of the run tracking database and other
  output files. You can change this to whatever name you like.
 
- - `-e DISPLAY=HOST_IP:0 ` sets the `DISPLAY` environment variable inside the container. Use `ifconfig | grep inet` to get your IP address, and replace `HOST_IP` with that number. You can also remove this line if you dont plan on
- using the `opsim4_config_gui`.
-
  - `-p 8888:8888` this is read as `port on host:port on container`. Meaning port `8888` in the container will be fed to port `8888` on your local host. This allows you to use things like `jupyter lab`.
 
- - `oboberg/opsim4_fbs_py3:180502` this is the name of the docker image. If you dont already have it from doing `docker pull oboberg/opsim4_fbs_py3:180502`, it will automatically be pulled.
+ - `oboberg/opsim4_fbs_py3:latest` this is the name of the docker image. If you don't already have it from doing `docker pull oboberg/opsim4_fbs_py3:latest`, it will automatically be pulled.
 
 ### Docker `run` option 2.
 Same as above but mounting local repo directory in container for development.
@@ -68,9 +64,8 @@ Same as above but mounting local repo directory in container for development.
            -v /Users/my_name/lsst/opsimv4_data/fbs_repos:/home/opsim/dev_repos \
            -v $HOME/.config:/home/opsim/.config \
            -e OPSIM_HOSTNAME=opsim-docker \
-           -e DISPLAY=HOST_IP:0 \
            -p 8888:8888 \
-           oboberg/opsim4_fbs_py3:180502
+           oboberg/opsim4_fbs_py3:latest
  ~~~
 
 Doing this will allow you to locally edit code in `/Users/my_name/lsst/opsimv4_data/fbs_repos` and have it be accessible to the container. You will have to `eups` declare, setup, and scons the packages as you normally would.
@@ -87,7 +82,7 @@ docker run --name "$1" \
         -e OPSIM_HOSTNAME=opsim-docker \
         -e DISPLAY=HOST_IP:0 \
         -p 8888:8888 \
-        oboberg/opsim4_fbs_py3:180502
+        oboberg/opsim4_fbs_py3:latest
 ~~~
 You will need to have `${sky_brightness_data_dir}` set in your `.bash_profile`.
 
@@ -103,8 +98,6 @@ run_dir=$HOME/opsimv4_data/run_dir
 config_dir=$HOME/opsimv4_data/config_dir
 # Sky Brightness data directory
 #sky_brightness_data_dir=$HOME/sims_skybrightness_pre/data
-# IP address for machine
-host_ip=127.0.0.1
 
 docker run -it --rm --name "$1" \
           -v ${run_dir}:/home/opsim/run_local \
@@ -114,7 +107,7 @@ docker run -it --rm --name "$1" \
           -e OPSIM_HOSTNAME=${host_name} \
           -e DISPLAY=${host_ip}:0 \
           -p 8899:8888 \
-          oboberg/opsim4_fbs_py3:180502
+          oboberg/opsim4_fbs_py3:latest
 ~~~
 
 Now just start the container with `./docker_opsimv4.sh my_container_name`.
@@ -150,7 +143,7 @@ docker run -it --rm --name "$1" \
           -v $HOME/.config:/home/opsim/.config \
           -e OPSIM_HOSTNAME=opsim-docker \
           -p 8888:8888 \
-          oboberg/opsim4_fbs_py3:180502
+          oboberg/opsim4_fbs_py3:latest
 ~~~
 
 Run command:
@@ -160,25 +153,21 @@ $ /docker_opsimv4.sh my_opsim_test
 After running this command you will see output setting up the container environment.
 Really just running scons and setup. If a scons test fails it is ok, we are fixing that.
 
-When it is done your command promt should now look something like this:
+When it is done your command prompt should now look something like this:
 ~~~
-opsim@10e581808be4 ~]$
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$
 ~~~
 Let's do an `ls` just to see what is there
 ~~~
-[opsim@10e581808be4 ~]$ ls
-dds  default_configs  other-configs  pull_and_config.sh  pull_repos.sh  repos  run_local  sky_brightness_data  stack  startup_fbs.sh
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls
+dds  default_configs other-configs pull_and_config.sh  pull_repos.sh  repos  run_local run_and_config.sh  sky_brightness_data  stack  startup_fbs.sh
+
 ~~~
-Go ahead an run the `pull_repos.sh` script. This will get all of the container repos up to date.
-~~~
-[opsim@10e581808be4 ~]$ ./pull_repos.sh
-~~~
-Again you will see pull commands and scons ouput.
 
 The next step is to setup the tracking database for the opsim runs. This is done simply with this command.
 ~~~
-[opsim@10e581808be4 ~]$ manage_db --save-dir=/home/opsim/run_local/output
-[opsim@10e581808be4 ~]$ ls run_local/output/
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ manage_db --save-dir=/home/opsim/run_local/output
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls run_local/output/
 opsim-docker_sessions.db
 ~~~
 You can see that the root name of the sessions db is the `OPSIM_HOSTNAME` set in
@@ -187,8 +176,8 @@ the bash script.
 Now `cd` into `run_local`. Only output in this directory and `~/other-configs/` will be saved after the container is stopped.
 This is because these are the local volumes mounted in the container.
 ~~~
-[opsim@10e581808be4 ~]$ cd run_local/
-[opsim@10e581808be4 run_local]$ ls
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ cd run_local/
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls
 log  output
 ~~~
 Try running `opsim4 -h` to see the what options are available for running commands. Note the default is to use the feature based scheduler.
@@ -196,14 +185,14 @@ Try running `opsim4 -h` to see the what options are available for running comman
 Test a one day simulation using the `feature` based scheduler.
 
 ~~~
-[opsim@10e581808be4 run_local]$ opsim4 --scheduler feature  -c "test one day simulation with feature scheduler" --frac-duration=0.003
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ opsim4 --frac-duration=0.003 -c "test one day simulation with feature scheduler"
 ~~~
 
 After it is done running, should only take a couple of minutes, `ls` the directories in `run_local`
 ~~~
-[opsim@10e581808be4 run_local]$ ls log/
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls log/
 opsim-docker_2000.log
-[opsim@10e581808be4 run_local]$ ls output/
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls output/
 opsim-docker_2000.db  opsim-docker_sessions.db
 ~~~
 
@@ -213,52 +202,27 @@ In a new terminal on your local host, change directory to whatever you set as th
 the run script. You should see the same see matching `log` and `'db` files in the local directories.
 These files will remain on your local disk even after the container is stopped and removed.
 
-Now lets do an example with the proposal based scheduler. First we have to unsetup the feature based scheduler.
-
-~~~
-[opsim@10e581808be4 run_local]$ unsetup sims_featureScheduler
-~~~
-
-Now re-setup the other packages.
-~~~
-[opsim@10e581808be4 run_local]$ source ~/stack/loadLSST.bash
-[opsim@10e581808be4 run_local]$ setup sims_ocs
-[opsim@10e581808be4 run_local]$ setup ts_scheduler
-[opsim@10e581808be4 run_local]$ setup ts_astrosky_model
-~~~
-
 Now run the command to start the simulation
 ~~~
-opsim4 --scheduler proposal  -c "test one day simulation with propsal scheduler" --frac-duration=0.003 --dds-com
+opsim4 --scheduler proposal  -c "test one day simulation with proposal scheduler" --frac-duration=0.003
 ~~~
 
 `ls` the directories in `run_local` again and you will see that the `log` and `database` files have incremented by 1.
 ~~~
-[opsim@10e581808be4 run_local]$ ls log/
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls log/
 opsim-docker_2000.log  opsim-docker_2001.log
 
-[opsim@10e581808be4 run_local]$ ls output/
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls output/
 opsim-docker_2000.db  opsim-docker_2001.dbopsim-docker_sessions.db
 ~~~
 
 These new files should also be in the local `run_dir`.
 
-If you want to switch pack to using the feature based scheduler simply re-run the `pull_repos.sh` script,
-or do the following.
-
-~~~
-[opsim@10e581808be4 run_local]$ source ~/stack/loadLSST.bash
-[opsim@10e581808be4 run_local]$ setup sims_ocs
-[opsim@10e581808be4 run_local]$ setup ts_scheduler
-[opsim@10e581808be4 run_local]$ setup sims_featureScheduler
-[opsim@10e581808be4 run_local]$ setup ts_astrosky_model
-~~~
-
 # Using jupyter lab or jupyter notebooks
 
 While still in `run_local` use the following command to start the `jupyter lab` interface.
 ~~~
-[opsim@10e581808be4 run_local]$ jupyter lab --ip=0.0.0.0
+(lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ jupyter lab --ip=0.0.0.0
 ~~~
 You will see eventually see the link come up to access the `jupyter lab` page. Something like this.
 ~~~

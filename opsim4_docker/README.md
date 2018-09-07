@@ -213,7 +213,7 @@ opsim4 --scheduler proposal  -c "test one day simulation with proposal scheduler
 opsim-docker_2000.log  opsim-docker_2001.log
 
 (lsst-scipipe-fcd27eb) [opsim@380e66de8798 ~]$ ls output/
-opsim-docker_2000.db  opsim-docker_2001.dbopsim-docker_sessions.db
+opsim-docker_2000.db  opsim-docker_2001.db opsim-docker_sessions.db
 ~~~
 
 These new files should also be in the local `run_dir`.
